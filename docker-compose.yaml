@@ -44,12 +44,3 @@ services:
 networks:
   postgres:
     driver: bridge
-
-volumes:
-  postgres:
-    driver: local
-    name: postgres_data
-    driver_opts:
-      type: none
-      device: ${POSTGRES_VOLUME_PATH}
-      o: bind
