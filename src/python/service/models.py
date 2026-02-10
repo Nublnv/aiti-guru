@@ -69,6 +69,14 @@ async def add_item_into_order(
     quantity: int
 ) -> None:
     
+    check_order_stmt = (
+        select(Orders.id)
+        .where(Orders.id == order_id))
+    result = await session.execute(check_order_stmt)
+    existing_order_id = result.scalar_one_or_none()
+    if existing_order_id is None:
+        raise OrderNotFoundError(f"Order with id {order_id} does not exist.")
+
     check_quantity_stmt = (
         select(Items.quantity)
         .where(Items.id == item_id)
@@ -79,14 +87,6 @@ async def add_item_into_order(
         raise ItemNotFoundError(f"Item with id {item_id} does not exist.")
     if available_quantity < quantity:
         raise NotEnoughQuantityError(f"Not enough quantity available for item with id {item_id}. Requested: {quantity}, Available: {available_quantity}")
-    
-    check_order_stmt = (
-        select(Orders.id)
-        .where(Orders.id == order_id))
-    result = await session.execute(check_order_stmt)
-    existing_order_id = result.scalar_one_or_none()
-    if existing_order_id is None:
-        raise OrderNotFoundError(f"Order with id {order_id} does not exist.")
 
     stmt = insert(OrderItems).values(
         order_id=order_id,
