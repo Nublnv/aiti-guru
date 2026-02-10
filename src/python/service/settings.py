@@ -49,9 +49,9 @@ async def get_psql() -> AsyncGenerator[AsyncSession, None]:
         session.begin()
         try:
             yield session
-            session.commit()
+            await session.commit()
         except Exception as e:
-            session.rollback()
+            await session.rollback()
             raise e
         finally:
             await session.close()

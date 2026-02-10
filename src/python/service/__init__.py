@@ -8,19 +8,17 @@ async def start_server(
 ):
     rest_settings = get_rest_settings()
     
-    async with get_psql() as psql:
+    app.extra["psql"] = get_psql
 
-        app.extra["psql"] = psql
-
-        config = Config(
-            app=app,
-            host=rest_settings.host,
-            port=rest_settings.port,
-            log_level="info",
-            loop="asyncio"
-        )
-        server = Server(config)
-        await server.serve()
+    config = Config(
+        app=app,
+        host=rest_settings.host,
+        port=rest_settings.port,
+        log_level="info",
+        loop="asyncio"
+    )
+    server = Server(config)
+    await server.serve()
 
 
 def main():
