@@ -1,14 +1,16 @@
 services:
   postgres:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: postgres
     container_name: postgres
     image: postgres
     environment:
       POSTGRES_USER: ${PSQL_USER}
       POSTGRES_PASSWORD: ${PSQL_PASSWORD}
-      PGDATA: /data/postgres
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
       POSTGRES_DB: postgres
-    volumes:
-      - postgres:/data/postgres
     ports:
       - "5332:5432"
     networks:
@@ -25,6 +27,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: service
     ports:
       - "8080:8080"
     environment:
